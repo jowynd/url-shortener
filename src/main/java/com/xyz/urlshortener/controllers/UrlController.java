@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -55,5 +56,12 @@ public class UrlController {
         headers.setLocation(URI.create(url.get().getFullUrl()));
 
         return ResponseEntity.status(HttpStatus.FOUND).headers(headers).build();
+    }
+
+    //Deleta urls expiradas
+    @Scheduled(fixedRate = 3000)
+    public void cleanupExpiredUrls() {
+        LocalDateTime now = LocalDateTime.now();
+        urlRepository.deleteExpiredUrls(now);
     }
 }
